@@ -2,6 +2,8 @@
 
 A mod for **Data Center** (by Waseku) that fixes a bug where **malware gets straight past a correctly set-up firewall** and shuts your servers down.
 
+**[Get it on the Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3831754850)** · [Download from GitHub Releases](https://github.com/checkersx/data-center-firewall-fix/releases)
+
 ![Firewall Fix](workshop/preview.jpg)
 
 **Contents:** [The bug](#the-bug) · [What it does](#what-it-does) · [A firewall that stops malware](#a-firewall-that-stops-malware) · [Before you install](#before-you-install) · [Install](#install) · [Settings](#settings) · [Still getting malware?](#still-getting-malware) · [Compatibility](#compatibility) · [How the bug works](#how-the-bug-works) · [Building from source](#building-from-source)
@@ -47,7 +49,7 @@ You need these once, for any code mod in Data Center. If you already use other c
 There's one file: **`FirewallFix.dll`**. It goes in the **`Mods`** folder inside your game folder. To open the game folder: in your Steam Library, right-click **Data Center** → **Manage** → **Browse local files**. Use the `Mods` folder next to `Data Center.exe`, not the one inside `StreamingAssets`.
 
 - **From GitHub:** download `FirewallFix.dll` from the [Releases page](https://github.com/checkersx/data-center-firewall-fix/releases), put it in `Mods`, and start the game.
-- **From the Steam Workshop:** subscribe on the Workshop page. If you have WorkshopModSync (see below), that's all: start the game. Without it, start the game once and quit, then open `Data Center_Data` → `StreamingAssets` → `Mods` in your game folder, type `FirewallFix.dll` into File Explorer's search box, and copy the file it finds into your game's `Mods` folder.
+- **From the Steam Workshop:** subscribe on the [Workshop page](https://steamcommunity.com/sharedfiles/filedetails/?id=3831754850). If you have WorkshopModSync (see below), that's all: start the game. Without it, start the game once and quit, then open `Data Center_Data` → `StreamingAssets` → `Mods` in your game folder, type `FirewallFix.dll` into File Explorer's search box, and copy the file it finds into your game's `Mods` folder.
 
 **Check it worked:** the MelonLoader console shows `Firewall Fix v1.0.0`, and within 10 minutes of play it shows a line starting `Malware attack:`.
 
