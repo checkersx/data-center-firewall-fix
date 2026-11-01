@@ -1,0 +1,49 @@
+Firewall Fix for Data Center: how to install
+============================================
+
+USING WORKSHOPMODSYNC? Then you don't need these steps: it installs the mod
+for you each time the game starts. (You have it if your game folder's Plugins
+folder contains WorkshopModSync.dll.)
+
+Otherwise: this is a code mod. The Steam Workshop downloads it, but Data Center
+does not install code mods by itself, so you copy ONE file by hand.
+
+BEFORE YOU START (once, for any code mod)
+  - MelonLoader 0.7.3 must be installed for Data Center.
+  - A fix-up plugin (DS-InteropFix or Il2CppAssemblyFixer) must be installed,
+    or no code mods load at all.
+  If you already use other code mods, you most likely have both.
+
+INSTALL
+  1. Close the game.
+  2. Copy this file:
+         Mods\FirewallFix.dll            (in the folder you're looking at now)
+     into the Mods folder inside your game folder:
+         ...\steamapps\common\Data Center\Mods\
+     To open the game folder: in your Steam Library, right-click Data Center,
+     then Manage, then Browse local files.
+     Use the Mods folder next to "Data Center.exe", NOT the one inside
+     Data Center_Data\StreamingAssets.
+  3. Start the game.
+
+CHECK IT WORKED
+  - The MelonLoader console window shows "Firewall Fix v1.0.0".
+  - Within 10 minutes of play it shows a line starting "Malware attack:".
+
+SETTINGS
+  UserData\MelonPreferences.cfg in the game folder, section [FirewallFix]
+  (it appears after the first run with the mod; edit it with the game closed):
+    RepairCableIds = true     the fix itself; leave it on
+    DisableMalware = false    set to true to switch malware attacks off
+
+UPDATING
+  Steam downloads updates automatically. With the game closed, copy the new
+  FirewallFix.dll into the game's Mods folder again.
+
+UNINSTALLING
+  With the game closed, unsubscribe first (so WorkshopModSync doesn't copy it
+  back), then delete FirewallFix.dll from the game's Mods folder. Your saves
+  still load without the mod.
+
+More help, and the source code (GPL-3.0):
+  https://github.com/checkersx/data-center-firewall-fix

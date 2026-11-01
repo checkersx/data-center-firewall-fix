@@ -1,0 +1,90 @@
+Fixes a bug where [b]malware gets straight past a correctly set-up firewall[/b] and shuts your servers down.
+
+[h2]The bug[/h2]
+You do the Internet Access ticket: a router with the customer's subnet, a firewall with an allow rule, everything cabled up. The ticket completes. But every 10 minutes, black malware packets still come in from the Internet, travel along your cables, and switch your servers off, as if the firewall weren't there.
+
+It isn't your setup. The game gives every switch, router and firewall an ID, and each cable remembers the ID of the device at each end. Sometimes, after you load a save or place a new device, a device's cables keep an [i]old[/i] ID. The malware looks for firewalls by their ID, can't find yours, and treats it as a plain piece of cable. Because of the same mix-up, the firewall's rules don't apply to normal traffic either.
+
+[h2]What this mod does[/h2]
+[list]
+[*][b]Fixes the IDs.[/b] Every 30 seconds, and right before each malware attack, it finds cables that name a device by an outdated ID and corrects them. Your firewall then stops malware the way it should, and its rules apply.
+[*][b]Tells you what each attack hit.[/b] The MelonLoader console shows a line per attack: [i]"Malware attack: no servers exposed; 1 firewall blocking."[/i], or which servers the malware could reach.
+[*][b]Optional: no malware at all.[/b] One setting switches malware attacks off (see Settings).
+[*]Works on your existing saves. Nothing extra is saved, so you can remove the mod at any time.
+[/list]
+
+[h2]A firewall that stops malware[/h2]
+Malware starts at the Internet and follows every cable. A firewall stops it when:
+[list]
+[*]the firewall is [b]switched on[/b],
+[*]every cable route from the Internet to your servers [b]goes through it[/b] (Internet → router → firewall → your switches, or Internet → firewall → router → … both work),
+[*]it has [b]no "allow everything" rule[/b] (allow, any port, no source, no destination). Any other rules block malware.
+[/list]
+For the Internet Access ticket, one rule is enough: [b]allow port 443 from the customer's subnet[/b] (for example 192.168.1.0/24).
+[b]Do I need a "deny any any" rule?[/b] No. A firewall already blocks anything that no rule allows. Keeping one does no harm, as long as it's below your allow rules (the first rule that matches wins).
+
+[h2]⚠ This is a code mod: pick an install method below[/h2]
+Data Center doesn't install code mods by itself. With [b]WorkshopModSync[/b] (a free helper by Bloody) it's subscribe and play. Without it, there's one file to copy.
+
+[h2]Before you install (once, for any code mod)[/h2]
+If you already use other code mods, you most likely have these. Otherwise:
+[olist]
+[*][b]MelonLoader 0.7.3[/b] from [url=https://github.com/LavaGang/MelonLoader/releases]the MelonLoader releases page[/url]. Run the installer, point it at Data Center.exe, choose 0.7.3, install. Start the game once, then quit.
+[*][b]A fix-up plugin[/b], or no code mods load at all: [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3797166996]DS-InteropFix[/url] or [url=https://github.com/mleem97/Il2CppAssemblyFixer]Il2CppAssemblyFixer[/url]. Follow its own instructions.
+[/olist]
+
+[h2]How to install: pick one[/h2]
+All four ways start from your [b]game folder[/b]. To open it: in your Steam Library, right-click [b]Data Center[/b] → [b]Manage[/b] → [b]Browse local files[/b]. It's the folder with [b]Data Center.exe[/b] in it.
+
+[h3]Way 1: you already have WorkshopModSync (easiest)[/h3]
+Check: if the [b]Plugins[/b] folder in your game folder contains [b]WorkshopModSync.dll[/b], you have it.
+[olist]
+[*]Subscribe to this mod.
+[*]Start the game. Done. WorkshopModSync installs your subscribed mods every time the game starts, updates included.
+[/olist]
+
+[h3]Way 2: set up WorkshopModSync once, then subscribe and play[/h3]
+[b]WorkshopModSync[/b] is a free helper made by [b]Bloody[/b]. It comes with Bloody's [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3773467133]DHCP Mod[/url].
+[olist]
+[*]Subscribe to [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3773467133]DHCP Mod[/url] and to this mod.
+[*]Start the game, wait for the main menu, then quit.
+[*]In your game folder, open [b]Data Center_Data[/b] → [b]StreamingAssets[/b] → [b]Mods[/b] → [b]workshop_3773467133[/b] → [b]Plugins[/b], and copy [b]WorkshopModSync.dll[/b].
+[*]Go back to your game folder, open its [b]Plugins[/b] folder, and paste.
+[*]Start the game. WorkshopModSync installs this mod (and DHCP Mod) and keeps them updated.
+[/olist]
+
+[h3]Way 3: copy one file by hand (no helper)[/h3]
+[olist]
+[*]Subscribe to this mod.
+[*]Start the game, wait for the main menu, then quit.
+[*]In your game folder, open [b]Data Center_Data[/b] → [b]StreamingAssets[/b] → [b]Mods[/b]. Type [b]FirewallFix.dll[/b] into File Explorer's search box (top right), and copy the file it finds.
+[*]Go back to your game folder, open its [b]Mods[/b] folder, and paste.
+[*]Start the game.
+[/olist]
+
+[h3]Way 4: without the Steam Workshop[/h3]
+Download [b]FirewallFix.dll[/b] from the [url=https://github.com/checkersx/data-center-firewall-fix/releases]GitHub releases page[/url] and put it in the [b]Mods[/b] folder in your game folder.
+
+[b]Check it worked:[/b] the MelonLoader console shows [b]Firewall Fix v1.0.0[/b]. Within 10 minutes of play it shows a [i]"Malware attack: …"[/i] line.
+
+[h2]Settings[/h2]
+In [b]UserData\MelonPreferences.cfg[/b] in your game folder (it appears after the first run with the mod), under [b][FirewallFix][/b]:
+[list]
+[*][b]RepairCableIds = true[/b]: the fix itself. Leave it on.
+[*][b]DisableMalware = false[/b]: set it to [b]true[/b] to switch malware attacks off completely.
+[/list]
+Edit the file with the game closed.
+
+[h2]Still getting malware?[/h2]
+Look in the MelonLoader console for [i]"Malware attack: N server(s) exposed (…)"[/i]. It names the servers malware could reach. Each of them has a cable route from the Internet that doesn't go through a working firewall: a second cable to the Internet that skips the firewall, a firewall that's switched off, or one with an "allow everything" rule.
+
+[h2]Compatibility[/h2]
+[list]
+[*]Standalone: no framework needed. Works alongside other mods, including [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3829635443]Next-Gen Hardware[/url].
+[*][b]Co-op: never tested.[/b] Malware attacks are run by the host, so the host needs the mod. To be safe, install it for every player.
+[*]Uninstall: with the game closed, unsubscribe first (so WorkshopModSync doesn't put it back), then delete FirewallFix.dll from the game's Mods folder.
+[*]Problems? Report them on [url=https://github.com/checkersx/data-center-firewall-fix/issues]GitHub[/url], with the file Data Center\MelonLoader\Latest.log.
+[/list]
+
+Source code (GPL-3.0): [url=https://github.com/checkersx/data-center-firewall-fix]github.com/checkersx/data-center-firewall-fix[/url]
+Tested on Data Center Steam build 25869593 with MelonLoader 0.7.3. Not affiliated with Waseku.

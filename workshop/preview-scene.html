@@ -1,0 +1,328 @@
+<!doctype html>
+<!--
+  Source of workshop/preview.jpg (1024x1024): an SVG firewall appliance in front of a burning shield,
+  stopping malware on its incoming cable. No game assets. Same look as Next-Gen Hardware's preview.
+  Render with headless Edge, then convert the PNG to preview.jpg:
+    msedge --headless=new --disable-gpu --hide-scrollbars --window-size=1024,1024 --virtual-time-budget=3000 --screenshot=render.png file:///<path>/preview-scene.html
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; width: 1024px; height: 1024px; overflow: hidden; background: #010204; }
+  .canvas { position: relative; width: 1024px; height: 1024px; overflow: hidden; }
+  svg { position: absolute; inset: 0; }
+  .title {
+    position: absolute; top: 40px; left: 0; right: 0; text-align: center;
+    font-family: "Segoe UI Black", "Segoe UI", sans-serif; font-weight: 900;
+    font-size: 126px; line-height: 0.96; letter-spacing: 1px; color: #fff;
+    text-shadow: 0 0 28px rgba(255, 130, 40, 0.6), 0 0 4px rgba(255, 210, 160, 0.6), 0 6px 22px rgba(0, 0, 0, 0.9);
+  }
+  .title-rule {
+    position: absolute; top: 296px; left: 50%; width: 420px; margin-left: -210px; height: 3px; border-radius: 2px;
+    background: linear-gradient(90deg, transparent, #ffd9a8, transparent);
+    box-shadow: 0 0 14px 3px rgba(255, 140, 40, 0.55);
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="sky" cx="50%" cy="45%" r="75%">
+      <stop offset="0" stop-color="#0d1426"/>
+      <stop offset="0.45" stop-color="#060b18"/>
+      <stop offset="0.8" stop-color="#020409"/>
+      <stop offset="1" stop-color="#010204"/>
+    </radialGradient>
+    <radialGradient id="fireGlow" cx="512" cy="540" r="400" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff7a1a" stop-opacity="0.42"/>
+      <stop offset="0.5" stop-color="#ff5a10" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#ff5a10" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="dangerGlow" cx="110" cy="760" r="330" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff2a2a" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#ff2a2a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="safeGlow" cx="920" cy="760" r="330" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2f8cff" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#2f8cff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a0f1c"/>
+      <stop offset="1" stop-color="#010204"/>
+    </linearGradient>
+
+    <!-- shield -->
+    <linearGradient id="shieldFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a0e05"/>
+      <stop offset="1" stop-color="#4a1606"/>
+    </linearGradient>
+    <radialGradient id="shieldHeat" cx="512" cy="700" r="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff8a24" stop-opacity="0.75"/>
+      <stop offset="0.55" stop-color="#ff5a10" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#ff5a10" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="bricks" width="60" height="30" patternUnits="userSpaceOnUse">
+      <g fill="rgba(255,120,40,0.10)" stroke="rgba(255,170,90,0.55)" stroke-width="1.6">
+        <rect x="2" y="2" width="56" height="11" rx="1.5"/>
+        <rect x="-28" y="17" width="56" height="11" rx="1.5"/>
+        <rect x="32" y="17" width="56" height="11" rx="1.5"/>
+      </g>
+    </pattern>
+    <path id="shieldPath" d="M512 334 C 578 362 636 372 690 370 L 690 522 C 690 618 612 684 512 722 C 412 684 334 618 334 522 L 334 370 C 388 372 446 362 512 334 Z"/>
+    <clipPath id="shieldClip"><use href="#shieldPath"/></clipPath>
+    <linearGradient id="flameBack" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#ff8a24"/>
+      <stop offset="0.6" stop-color="#ff4a0e"/>
+      <stop offset="1" stop-color="#d42a08" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="flame" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#fff1c2"/>
+      <stop offset="0.3" stop-color="#ffc04a"/>
+      <stop offset="0.7" stop-color="#ff6a14"/>
+      <stop offset="1" stop-color="#ff3a0a" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- appliance -->
+    <linearGradient id="front" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a3343"/>
+      <stop offset="0.1" stop-color="#171c27"/>
+      <stop offset="1" stop-color="#0d1118"/>
+    </linearGradient>
+    <linearGradient id="top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a2a22"/>
+      <stop offset="0.25" stop-color="#232a37"/>
+      <stop offset="1" stop-color="#141922"/>
+    </linearGradient>
+    <linearGradient id="ear" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2c3343"/>
+      <stop offset="1" stop-color="#151a24"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="0.35">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.08"/>
+      <stop offset="0.38" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="0.75" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0.04"/>
+    </linearGradient>
+    <radialGradient id="screw" cx="35%" cy="35%" r="65%">
+      <stop offset="0" stop-color="#8a96a8"/>
+      <stop offset="0.6" stop-color="#39414f"/>
+      <stop offset="1" stop-color="#1a1f28"/>
+    </radialGradient>
+    <linearGradient id="reflectFade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <mask id="reflectMask" maskUnits="userSpaceOnUse" x="0" y="740" width="1024" height="150">
+      <rect x="0" y="740" width="1024" height="140" fill="url(#reflectFade)"/>
+    </mask>
+
+    <!-- cables (styled where they're used) -->
+    <path id="cableIn" d="M404 700 C 404 760 390 820 330 840 C 250 862 120 858 -20 852" fill="none" stroke-linecap="round"/>
+    <path id="cableOut" d="M696 702 C 696 762 712 820 772 840 C 852 864 960 858 1044 852" fill="none" stroke-linecap="round"/>
+
+    <!-- malware orb -->
+    <radialGradient id="orb" cx="38%" cy="32%" r="70%">
+      <stop offset="0" stop-color="#4a4f5a"/>
+      <stop offset="0.35" stop-color="#14161b"/>
+      <stop offset="1" stop-color="#000"/>
+    </radialGradient>
+    <g id="malware">
+      <circle r="27" fill="#ff2020" opacity="0.35" filter="url(#blur8)"/>
+      <g fill="#050608" stroke="#ff4a3a" stroke-width="1.2" stroke-opacity="0.7">
+        <path d="M0 -25 L5 -14 L-5 -14 Z"/><path d="M0 25 L5 14 L-5 14 Z"/>
+        <path d="M-25 0 L-14 5 L-14 -5 Z"/><path d="M25 0 L14 5 L14 -5 Z"/>
+        <path d="M-17.7 -17.7 L-6.4 -13.4 L-13.4 -6.4 Z"/><path d="M17.7 17.7 L6.4 13.4 L13.4 6.4 Z"/>
+        <path d="M17.7 -17.7 L13.4 -6.4 L6.4 -13.4 Z"/><path d="M-17.7 17.7 L-13.4 6.4 L-6.4 13.4 Z"/>
+      </g>
+      <circle r="15.5" fill="url(#orb)" stroke="#ff3a2a" stroke-opacity="0.55" stroke-width="1.2"/>
+      <circle cx="-5" cy="-6" r="3.5" fill="#fff" opacity="0.18"/>
+    </g>
+
+    <filter id="glow4" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow10" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="blur2"><feGaussianBlur stdDeviation="2"/></filter>
+    <filter id="blur6" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="blur4" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+    <filter id="blur8" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="8"/></filter>
+    <filter id="blur22" x="-50%" y="-200%" width="200%" height="500%"><feGaussianBlur stdDeviation="22"/></filter>
+    <filter id="blur50" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="50"/></filter>
+  </defs>
+
+  <!-- backdrop -->
+  <rect width="1024" height="1024" fill="url(#sky)"/>
+  <rect width="1024" height="1024" fill="url(#fireGlow)"/>
+  <rect width="1024" height="1024" fill="url(#dangerGlow)"/>
+  <rect width="1024" height="1024" fill="url(#safeGlow)"/>
+  <rect x="0" y="740" width="1024" height="284" fill="url(#floor)"/>
+  <rect x="60" y="739" width="904" height="2" fill="#ffb070" opacity="0.25" filter="url(#blur2)"/>
+
+  <!-- embers -->
+  <g fill="#ffb060" filter="url(#blur2)">
+    <circle cx="300" cy="420" r="3" opacity="0.6"/><circle cx="252" cy="520" r="2" opacity="0.5"/>
+    <circle cx="742" cy="440" r="3" opacity="0.55"/><circle cx="790" cy="560" r="2" opacity="0.45"/>
+    <circle cx="398" cy="350" r="2" opacity="0.5"/><circle cx="640" cy="330" r="2.5" opacity="0.45"/>
+    <circle cx="168" cy="400" r="2" opacity="0.35"/><circle cx="870" cy="380" r="2.5" opacity="0.35"/>
+    <circle cx="712" cy="600" r="2" opacity="0.5"/><circle cx="318" cy="600" r="2.5" opacity="0.45"/>
+    <circle cx="580" cy="352" r="1.5" opacity="0.6"/><circle cx="930" cy="500" r="2" opacity="0.3"/>
+    <circle cx="96" cy="560" r="2" opacity="0.3"/><circle cx="470" cy="318" r="1.5" opacity="0.5"/>
+  </g>
+
+  <!-- shield, burning from behind the appliance -->
+  <use href="#shieldPath" fill="#ff7a1a" opacity="0.55" filter="url(#blur22)"/>
+  <g clip-path="url(#shieldClip)">
+    <use href="#shieldPath" fill="url(#shieldFill)"/>
+    <rect x="334" y="334" width="356" height="406" fill="url(#bricks)"/>
+    <rect x="334" y="334" width="356" height="406" fill="url(#shieldHeat)"/>
+    <g id="flamesBack" fill="url(#flameBack)" filter="url(#blur6)" opacity="0.9"></g>
+    <g id="flamesFront" fill="url(#flame)" filter="url(#blur2)"></g>
+  </g>
+  <use href="#shieldPath" fill="none" stroke="#ff8a2a" stroke-width="14" opacity="0.6" filter="url(#blur8)"/>
+  <use href="#shieldPath" fill="none" stroke="#ffcf8a" stroke-width="6"/>
+  <path d="M512 352 C 572 377 624 386 672 386 L 672 522 C 672 606 604 666 512 704 C 420 666 352 606 352 522 L 352 386 C 400 386 452 377 512 352 Z"
+        fill="none" stroke="#ffb35c" stroke-width="1.5" opacity="0.6"/>
+  <!-- tick: fixed -->
+  <path d="M446 452 L 494 500 L 584 410" fill="none" stroke="#ff9a3a" stroke-width="34" stroke-linecap="round" stroke-linejoin="round" opacity="0.65" filter="url(#blur8)"/>
+  <path d="M446 452 L 494 500 L 584 410" fill="none" stroke="#fff" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- floor glow under the appliance -->
+  <ellipse cx="512" cy="746" rx="320" ry="22" fill="#ff8a3a" opacity="0.32" filter="url(#blur22)"/>
+
+  <!-- the firewall appliance (2U, front facing the camera) -->
+  <g id="appliance">
+    <path d="M222 632 L 802 632 L 774 604 L 250 604 Z" fill="url(#top)"/>
+    <path d="M250 604 L 774 604" stroke="#ffb070" stroke-width="2" opacity="0.8" filter="url(#glow4)"/>
+    <path d="M250 618 L 774 618" stroke="#000" stroke-width="1" opacity="0.5"/>
+    <rect x="222" y="632" width="580" height="108" fill="url(#front)"/>
+    <rect x="222" y="632" width="580" height="108" fill="url(#sheen)"/>
+    <rect x="222.5" y="632.5" width="579" height="107" fill="none" stroke="#8cb4ff" stroke-opacity="0.12"/>
+
+    <!-- rack ears -->
+    <rect x="222" y="632" width="16" height="108" fill="url(#ear)"/>
+    <rect x="786" y="632" width="16" height="108" fill="url(#ear)" transform="translate(1588 0) scale(-1 1)"/>
+    <g fill="url(#screw)">
+      <circle cx="230" cy="654" r="3.5"/><circle cx="230" cy="718" r="3.5"/>
+      <circle cx="794" cy="654" r="3.5"/><circle cx="794" cy="718" r="3.5"/>
+    </g>
+
+    <!-- badge and status display -->
+    <path d="M268 648 C 274 651 280 652 286 652 L 286 662 C 286 670 278 675 268 679 C 258 675 250 670 250 662 L 250 652 C 256 652 262 651 268 648 Z"
+          fill="#2a0e05" stroke="#ffb35c" stroke-width="2" filter="url(#glow4)"/>
+    <path d="M261 663 L 266 668 L 276 657" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="296" y="668" font-family="Segoe UI Semibold, Segoe UI, sans-serif" font-size="13" letter-spacing="1.5" fill="#9aa6b8">FIREWALL</text>
+    <rect x="252" y="686" width="118" height="28" rx="3" fill="#04140a" stroke="#1f3d2c"/>
+    <text x="311" y="706" text-anchor="middle" font-family="Consolas, monospace" font-size="15" font-weight="700" letter-spacing="2" fill="#7dffaa" filter="url(#glow4)">SECURE</text>
+
+    <!-- 16 SFP cages, 2 x 8 -->
+    <g id="sfp">
+      <g id="sfpRow">
+        <g id="sfp1"><rect x="392" y="652" width="24" height="16" rx="1.5" fill="#1b2231" stroke="#3a465c"/><rect x="395" y="655" width="18" height="10" fill="#04060a"/></g>
+        <use href="#sfp1" x="29"/><use href="#sfp1" x="58"/><use href="#sfp1" x="87"/>
+        <use href="#sfp1" x="116"/><use href="#sfp1" x="145"/><use href="#sfp1" x="174"/><use href="#sfp1" x="203"/>
+      </g>
+      <use href="#sfpRow" y="34"/>
+    </g>
+    <g fill="#b8ffcf" filter="url(#glow4)">
+      <rect x="397" y="645" width="6" height="3" rx="1"/><rect x="426" y="645" width="6" height="3" rx="1"/>
+      <rect x="455" y="645" width="6" height="3" rx="1"/><rect x="513" y="645" width="6" height="3" rx="1"/>
+      <rect x="571" y="645" width="6" height="3" rx="1"/><rect x="600" y="645" width="6" height="3" rx="1"/>
+      <rect x="397" y="679" width="6" height="3" rx="1"/><rect x="455" y="679" width="6" height="3" rx="1"/>
+      <rect x="484" y="679" width="6" height="3" rx="1"/><rect x="542" y="679" width="6" height="3" rx="1"/>
+    </g>
+    <g fill="#ffd28a" filter="url(#glow4)"><rect x="542" y="645" width="6" height="3" rx="1"/><rect x="600" y="679" width="6" height="3" rx="1"/></g>
+
+    <!-- 4 QSFP cages, 2 x 2 -->
+    <g id="qsfp">
+      <g id="q1"><rect x="636" y="650" width="36" height="20" rx="2" fill="#1b2231" stroke="#3a465c"/><rect x="640" y="654" width="28" height="12" fill="#04060a"/></g>
+      <use href="#q1" x="42"/><use href="#q1" y="34"/><use href="#q1" x="42" y="34"/>
+    </g>
+    <g fill="#9fe0ff" filter="url(#glow4)">
+      <rect x="642" y="645" width="8" height="3" rx="1"/><rect x="684" y="645" width="8" height="3" rx="1"/>
+      <rect x="642" y="679" width="8" height="3" rx="1"/><rect x="684" y="679" width="8" height="3" rx="1"/>
+    </g>
+
+    <!-- vents, status lights, power -->
+    <g fill="#05070b">
+      <rect x="392" y="720" width="227" height="2" rx="1"/><rect x="392" y="725" width="227" height="2" rx="1"/>
+    </g>
+    <g filter="url(#glow4)">
+      <circle cx="738" cy="660" r="2.5" fill="#b8ffcf"/><circle cx="750" cy="660" r="2.5" fill="#b8ffcf"/>
+      <circle cx="762" cy="660" r="2.5" fill="#ffd28a"/><circle cx="774" cy="660" r="2.5" fill="#b8ffcf"/>
+      <circle cx="764" cy="712" r="7" fill="none" stroke="#8fd8ff" stroke-width="2.5"/>
+    </g>
+    <path d="M764 704 L 764 711" stroke="#8fd8ff" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- amber light frame -->
+    <g fill="#ffe2b8" filter="url(#glow4)">
+      <rect x="238" y="632" width="548" height="3" rx="1.5"/><rect x="238" y="737" width="548" height="3" rx="1.5"/>
+      <rect x="238" y="632" width="3" height="108" rx="1.5"/><rect x="783" y="632" width="3" height="108" rx="1.5"/>
+    </g>
+  </g>
+  <use href="#appliance" transform="translate(0 1480) scale(1 -1)" mask="url(#reflectMask)"/>
+
+  <!-- incoming cable from the Internet, carrying malware -->
+  <use href="#cableIn" stroke="#ff2a2a" stroke-width="26" opacity="0.3" filter="url(#blur8)"/>
+  <use href="#cableIn" stroke="#0b0e14" stroke-width="11"/>
+  <use href="#cableIn" stroke="#fff" stroke-opacity="0.14" stroke-width="2.5" transform="translate(-1 -3)"/>
+  <rect x="391" y="686" width="26" height="22" rx="2" fill="#2b3242" stroke="#465269"/>
+  <rect x="396" y="708" width="16" height="12" rx="2" fill="#151a24"/>
+
+  <!-- outgoing cable to the servers, carrying clean traffic -->
+  <use href="#cableOut" stroke="#2f8cff" stroke-width="22" opacity="0.28" filter="url(#blur8)"/>
+  <use href="#cableOut" stroke="#0b0e14" stroke-width="11"/>
+  <use href="#cableOut" stroke="#fff" stroke-opacity="0.14" stroke-width="2.5" transform="translate(1 -3)"/>
+  <rect x="680" y="684" width="34" height="22" rx="2" fill="#2b3242" stroke="#465269"/>
+  <rect x="688" y="706" width="18" height="12" rx="2" fill="#151a24"/>
+  <g fill="#bfeaff" filter="url(#glow10)">
+    <circle cx="711" cy="786" r="5"/><circle cx="790" cy="846" r="5"/>
+    <circle cx="878" cy="856" r="5"/><circle cx="977" cy="856" r="5"/>
+  </g>
+
+  <!-- the barrier across the cable, and malware stopped at it -->
+  <g transform="rotate(-33.5 352 830)">
+    <ellipse cx="352" cy="830" rx="11" ry="40" fill="none" stroke="#ff8a2a" stroke-width="16" opacity="0.55" filter="url(#blur8)"/>
+    <ellipse cx="352" cy="830" rx="11" ry="40" fill="#ffb060" fill-opacity="0.12" stroke="#ffe0b0" stroke-width="4"/>
+  </g>
+  <g stroke="#ffd59a" stroke-width="3" stroke-linecap="round" filter="url(#glow4)">
+    <path d="M330 818 L 318 798"/><path d="M322 828 L 300 818"/><path d="M326 850 L 306 862"/><path d="M336 858 L 330 878"/>
+    <path d="M318 838 L 300 838" stroke-width="2"/>
+  </g>
+  <g fill="#ffd59a" filter="url(#glow4)">
+    <circle cx="312" cy="790" r="2.5"/><circle cx="292" cy="812" r="2"/><circle cx="298" cy="872" r="2"/>
+    <circle cx="326" cy="888" r="2.5"/><circle cx="344" cy="800" r="2"/>
+  </g>
+  <use href="#malware" x="296" y="849"/>
+  <use href="#malware" x="222" y="855"/>
+  <use href="#malware" x="138" y="857"/>
+  <use href="#malware" x="50" y="855"/>
+</svg>
+<script>
+  // Flame tongues rising from behind the appliance (fixed values, so every render matches).
+  const NS = "http://www.w3.org/2000/svg", BASE = 640;
+  function tongues(id, list) {
+    const g = document.getElementById(id);
+    for (const [x, w, h, lean] of list) {
+      const p = document.createElementNS(NS, "path");
+      const l = x - w / 2, r = x + w / 2, tip = x + lean;
+      p.setAttribute("d", `M${l} ${BASE} C ${l} ${BASE - h * 0.45} ${x - w * 0.12} ${BASE - h * 0.62} ${tip} ${BASE - h} ` +
+                          `C ${x + w * 0.16} ${BASE - h * 0.58} ${r} ${BASE - h * 0.42} ${r} ${BASE} Z`);
+      g.appendChild(p);
+    }
+  }
+  tongues("flamesBack", [[352, 60, 80, 6], [392, 64, 128, -8], [440, 70, 150, 10], [490, 72, 170, -6],
+                         [540, 72, 160, 8], [590, 70, 140, -10], [636, 64, 118, 6], [676, 60, 80, -4]]);
+  tongues("flamesFront", [[372, 44, 62, 4], [414, 48, 92, -6], [462, 52, 112, 8], [512, 56, 126, -4],
+                          [562, 52, 108, 6], [610, 48, 90, -8], [654, 44, 64, 4]]);
+</script>
+<div class="title">FIREWALL<br>FIX</div>
+<div class="title-rule"></div>
+</div>
+</body>
+</html>
