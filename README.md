@@ -19,6 +19,7 @@ It isn't your setup. The game gives every switch, router and firewall an ID, and
 ## What it does
 
 - **Fixes the IDs.** Every 30 seconds, and right before each malware attack, it finds cables that name a device by an outdated ID and corrects them. Your firewall then stops malware the way it should, and its rules apply.
+- **Keeps switch IDs unique.** If a newly bought switch ends up with the same ID as one you already have, it gets its own, so a customer doesn't drop offline the next time you load. Saves where that has already happened are repaired when you load them.
 - **Tells you what each attack hit.** The MelonLoader console shows a line per attack, such as `Malware attack: no servers exposed; 1 firewall blocking.`, or which servers the malware could reach.
 - **Optional: no malware at all.** One setting switches malware attacks off (see [Settings](#settings)).
 - **Works on your existing saves.** Nothing extra is saved, so you can remove the mod at any time.
@@ -51,7 +52,7 @@ There's one file: **`FirewallFix.dll`**. It goes in the **`Mods`** folder inside
 - **From GitHub:** download `FirewallFix.dll` from the [Releases page](https://github.com/checkersx/data-center-firewall-fix/releases), put it in `Mods`, and start the game.
 - **From the Steam Workshop:** subscribe on the [Workshop page](https://steamcommunity.com/sharedfiles/filedetails/?id=3831754850). If you have WorkshopModSync (see below), that's all: start the game. Without it, start the game once and quit, then open `Data Center_Data` → `StreamingAssets` → `Mods` in your game folder, type `FirewallFix.dll` into File Explorer's search box, and copy the file it finds into your game's `Mods` folder.
 
-**Check it worked:** the MelonLoader console shows `Firewall Fix v1.0.0`, and within 10 minutes of play it shows a line starting `Malware attack:`.
+**Check it worked:** the MelonLoader console shows `Firewall Fix v1.1.0`, and within 10 minutes of play it shows a line starting `Malware attack:`.
 
 **WorkshopModSync** is a free helper by Bloody that copies your subscribed Workshop code mods into the right folders every time the game starts. It comes with Bloody's [DHCP Mod](https://steamcommunity.com/sharedfiles/filedetails/?id=3773467133). You have it if your game folder's `Plugins` folder contains `WorkshopModSync.dll`.
 
@@ -64,7 +65,8 @@ In `UserData\MelonPreferences.cfg` in your game folder (it appears after the fir
 
 | Setting | Default | What it does |
 |---|---|---|
-| `RepairCableIds` | `true` | The fix itself. Leave it on. |
+| `RepairCableIds` | `true` | The firewall fix itself. Leave it on. |
+| `RepairDuplicateIds` | `true` | Gives switches that share an ID their own, so customers stay connected after a reload. Leave it on. |
 | `DisableMalware` | `false` | Set to `true` to switch malware attacks off completely. |
 
 ## Still getting malware?
@@ -95,6 +97,13 @@ For anyone curious, or for fixing it in the game itself.
 - The game already has the right repair, `NetworkSwitch.PatchStaleSwitchId` (stale ID with the same name prefix → current ID), but only calls it from `ReconnectCables`, when a device powers on.
 
 The mod does the same for every switch, router and firewall: for each port, it corrects a stale `CableLink.switchID`, finds the port's cable end (≤ 0.3 m from the port), corrects a stale `SwitchID` through `UpdateCableInfo`, and then calls `NetworkMap.RemapDeviceId(old, new)` for routing. An ID counts as stale when it isn't the device's own ID, names no device that exists, and has the same name prefix. The repair runs every 30 seconds and in a Harmony prefix on `ComputeAttacks`.
+
+### Duplicate device IDs
+
+- When a save is loaded, `NetworkSwitch.SwitchInsertedInRack(SwitchSaveData)` checks `ContainsDuplicateSwitchId`. If the ID is taken, it gives the device a new one and calls `NetworkMap.RemapDeviceId(old, new)`. But that moves the map entry of the device that *already had* the ID, and `RegisterSwitch` only adds a key that's absent. So the renamed device is never registered, and `NetworkMap.switches[newId]` is the other device.
+- Path finding (`FindAllServerPathsFromCustomerPure`, `FindAllShortestPaths`) skips any node whose entry in `switches` is switched off. If the other device is a boxed, unpowered switch, every route through the renamed one is cut.
+- Duplicates can appear when a mod gives new devices an ID of its own, for example one made from where they spawn: the shop always delivers to the same spots, so a new switch can take the ID of an older one of the same model.
+- The mod gives every copy but one (the one registered in `NetworkMap`) a fresh `GenerateUniqueSwitchId()`, together with its ports, as long as it has no cables. Then, for any device whose ID is filed under a different device in `NetworkMap.switches`, it puts the device back and re-registers the other one under its own ID. This runs every 30 seconds, before each attack, and in a prefix on `SaveSystem.SaveGame`. A last-priority postfix on `SwitchInsertedInRack` also catches a device placed with another device's ID (for example when a mod puts back the ID it had before placement) and returns it to the ID the game just gave it, which its ports and `NetworkMap` already use.
 
 ## Building from source
 

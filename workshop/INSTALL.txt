@@ -27,13 +27,14 @@ INSTALL
   3. Start the game.
 
 CHECK IT WORKED
-  - The MelonLoader console window shows "Firewall Fix v1.0.0".
+  - The MelonLoader console window shows "Firewall Fix v1.1.0".
   - Within 10 minutes of play it shows a line starting "Malware attack:".
 
 SETTINGS
   UserData\MelonPreferences.cfg in the game folder, section [FirewallFix]
   (it appears after the first run with the mod; edit it with the game closed):
     RepairCableIds = true     the fix itself; leave it on
+    RepairDuplicateIds = true gives switches that share an ID their own; leave it on
     DisableMalware = false    set to true to switch malware attacks off
 
 UPDATING

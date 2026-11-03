@@ -65,12 +65,13 @@ Check: if the [b]Plugins[/b] folder in your game folder contains [b]WorkshopModS
 [h3]Way 4: without the Steam Workshop[/h3]
 Download [b]FirewallFix.dll[/b] from the [url=https://github.com/checkersx/data-center-firewall-fix/releases]GitHub releases page[/url] and put it in the [b]Mods[/b] folder in your game folder.
 
-[b]Check it worked:[/b] the MelonLoader console shows [b]Firewall Fix v1.0.0[/b]. Within 10 minutes of play it shows a [i]"Malware attack: …"[/i] line.
+[b]Check it worked:[/b] the MelonLoader console shows [b]Firewall Fix v1.1.0[/b]. Within 10 minutes of play it shows a [i]"Malware attack: …"[/i] line.
 
 [h2]Settings[/h2]
 In [b]UserData\MelonPreferences.cfg[/b] in your game folder (it appears after the first run with the mod), under [b][FirewallFix][/b]:
 [list]
 [*][b]RepairCableIds = true[/b]: the fix itself. Leave it on.
+[*][b]RepairDuplicateIds = true[/b]: see the note at the bottom. Leave it on.
 [*][b]DisableMalware = false[/b]: set it to [b]true[/b] to switch malware attacks off completely.
 [/list]
 Edit the file with the game closed.
@@ -85,6 +86,8 @@ Look in the MelonLoader console for [i]"Malware attack: N server(s) exposed (…
 [*]Uninstall: with the game closed, unsubscribe first (so WorkshopModSync doesn't put it back), then delete FirewallFix.dll from the game's Mods folder.
 [*]Problems? Report them on [url=https://github.com/checkersx/data-center-firewall-fix/issues]GitHub[/url], with the file Data Center\MelonLoader\Latest.log.
 [/list]
+
+[i]Since v1.1.0 it also tidies up switch IDs: if a newly bought switch ends up with the same ID as one you already have, it gets its own, so a customer doesn't drop offline the next time you load. Saves where that has already happened are repaired when you load them.[/i]
 
 Source code (GPL-3.0): [url=https://github.com/checkersx/data-center-firewall-fix]github.com/checkersx/data-center-firewall-fix[/url]
 Tested on Data Center Steam build 25869593 with MelonLoader 0.7.3. Not affiliated with Waseku.

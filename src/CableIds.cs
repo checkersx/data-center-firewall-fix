@@ -87,6 +87,7 @@ namespace FirewallFix
             foreach (var kv in remaps)
                 if (kv.Key.Length > 0) map.RemapDeviceId(kv.Key, kv.Value.to);
 
+            if (remaps.Count > 0) wis.RequestRouteEvaluation(); // routes are only re-evaluated on request
             if (remaps.Count == 0 && ports == 0) return;
             var detail = string.Join("; ", remaps.Select(kv => $"{kv.Value.to}: {kv.Value.ends} cable end(s) said '{kv.Key}'"));
             FirewallFixMod.Log.Msg($"Repaired stale device IDs ({reason}): {detail}" +
@@ -104,7 +105,7 @@ namespace FirewallFix
         }
 
         // Switches, routers and firewalls placed in the scene (FindObjectsOfTypeAll also returns templates).
-        static List<NetworkSwitch> LiveDevices()
+        internal static List<NetworkSwitch> LiveDevices()
         {
             var found = Resources.FindObjectsOfTypeAll<NetworkSwitch>();
             var list = new List<NetworkSwitch>();
