@@ -19,7 +19,7 @@ It isn't your setup. The game gives every switch, router and firewall an ID, and
 ## What it does
 
 - **Fixes the IDs.** Every 30 seconds, and right before each malware attack, it finds cables that name a device by an outdated ID and corrects them. Your firewall then stops malware the way it should, and its rules apply.
-- **Keeps switch IDs unique.** If a newly bought switch ends up with the same ID as one you already have, it gets its own, so a customer doesn't drop offline the next time you load. Saves where that has already happened are repaired when you load them.
+- **Fixes customers losing all connectivity after a load.** If a newly bought switch ends up with the same ID as one you already have, the game mixes the two up when you next load, and the customer behind your working switch goes offline. The mod gives the new switch its own ID, and repairs saves where that has already happened.
 - **Tells you what each attack hit.** The MelonLoader console shows a line per attack, such as `Malware attack: no servers exposed; 1 firewall blocking.`, or which servers the malware could reach.
 - **Optional: no malware at all.** One setting switches malware attacks off (see [Settings](#settings)).
 - **Works on your existing saves.** Nothing extra is saved, so you can remove the mod at any time.

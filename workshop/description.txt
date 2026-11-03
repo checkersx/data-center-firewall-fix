@@ -87,7 +87,7 @@ Look in the MelonLoader console for [i]"Malware attack: N server(s) exposed (…
 [*]Problems? Report them on [url=https://github.com/checkersx/data-center-firewall-fix/issues]GitHub[/url], with the file Data Center\MelonLoader\Latest.log.
 [/list]
 
-[i]Since v1.1.0 it also tidies up switch IDs: if a newly bought switch ends up with the same ID as one you already have, it gets its own, so a customer doesn't drop offline the next time you load. Saves where that has already happened are repaired when you load them.[/i]
+[i]Since v1.1.0 it also fixes a customer suddenly losing all connectivity when you load a save. That happens when a newly bought switch ends up with the same ID as one you already have: the game mixes the two up on load. The mod gives the new switch its own ID, and repairs saves where it has already happened.[/i]
 
 Source code (GPL-3.0): [url=https://github.com/checkersx/data-center-firewall-fix]github.com/checkersx/data-center-firewall-fix[/url]
 Tested on Data Center Steam build 25869593 with MelonLoader 0.7.3. Not affiliated with Waseku.
