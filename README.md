@@ -6,7 +6,7 @@ A mod for **Data Center** (by Waseku) that fixes a bug where **malware gets stra
 
 ![Firewall Fix](workshop/preview.jpg)
 
-**Contents:** [The bug](#the-bug) · [What it does](#what-it-does) · [A firewall that stops malware](#a-firewall-that-stops-malware) · [Before you install](#before-you-install) · [Install](#install) · [Settings](#settings) · [Still getting malware?](#still-getting-malware) · [Compatibility](#compatibility) · [How the bug works](#how-the-bug-works) · [Building from source](#building-from-source)
+**Contents:** [The bug](#the-bug) · [What it does](#what-it-does) · [A firewall that stops malware](#a-firewall-that-stops-malware) · [Before you install](#before-you-install) · [Install](#install) · [Settings](#settings) · [Still getting malware?](#still-getting-malware) · [Compatibility](#compatibility) · [Where the bugs come from](#where-the-bugs-come-from) · [How the fixes work](#how-the-fixes-work) · [Building from source](#building-from-source)
 
 ---
 
@@ -15,6 +15,8 @@ A mod for **Data Center** (by Waseku) that fixes a bug where **malware gets stra
 You do the Internet Access ticket: a router with the customer's subnet, a firewall with an allow rule, everything cabled up. The ticket completes. But every 10 minutes, black malware packets still come in from the Internet, travel along your cables, and switch your servers off, as if the firewall weren't there.
 
 It isn't your setup. The game gives every switch, router and firewall an ID, and each cable remembers the ID of the device at each end. Sometimes, after you load a save or place a new device, a device's cables keep an *old* ID. The malware looks for firewalls by their ID, can't find yours, and treats it as a plain piece of cable. Because of the same mix-up, the firewall's rules don't apply to normal traffic either.
+
+In the saves examined so far, the mix-up started with another mod, gregCore. Details are in [Where the bugs come from](#where-the-bugs-come-from).
 
 ## What it does
 
@@ -79,38 +81,98 @@ Otherwise, open an issue on [GitHub](https://github.com/checkersx/data-center-fi
 ## Compatibility
 
 - Standalone: no gregCore or other framework needed. Works alongside other mods, including [Next-Gen Hardware](https://github.com/checkersx/data-centre-next-gen-hardware).
+- **Using gregCore?** Firewall Fix repairs the device-ID problems gregCore 1.2.4-dev triggers (see [Where the bugs come from](#where-the-bugs-come-from)).
 - **Co-op has never been tested.** Malware attacks are run by the host, so the host needs the mod. To be safe, install it for every player.
 - Tested on Steam build 25869593 of Data Center, with MelonLoader 0.7.3.
 - Not affiliated with Waseku.
 
 ---
 
-## How the bug works
+## Where the bugs come from
 
-For anyone curious, or for fixing it in the game itself.
+This section is for modders, and for the developers of the game and of gregCore. It's based on the game's code (Steam build 25869593, read through Cpp2IL), the IL of gregCore 1.2.4-dev (the [gregCore Framework](https://steamcommunity.com/sharedfiles/filedetails/?id=3719510811) Workshop build of 28 October 2026), and real saves.
+- **Confirmed** means it's in the code and reproduces from save data.
+- **Suspected** means the evidence fits, but the exact sequence couldn't be replayed, because the logs from that session were gone.
 
-- `MaliciousAttackManager.ComputeAttacks` builds a graph from every cable in `WaypointInitializationSystem.GetAllCables()`. A switch end becomes a node named after `CableEndpoint.SwitchID`.
-- It treats firewalls as walls: every firewall from `NetworkMap.GetAllFirewalls()` that is on and has no blank allow-all rule, keyed by `NetworkSwitch.switchId`.
-- It runs a BFS from `"Internet"` that doesn't expand walls, and attacks every powered server it reaches.
-- When a device's `switchId` and its cables' `SwitchID` differ, the firewall's node is never recognised as a wall, so malware passes through it. Route evaluation looks devices up by the cable's ID too (`GetSwitchById` returns null), so the firewall's rules are skipped as well.
-- The mismatch was seen in a real save: firewall `Firewall4xQSXP16xSFP_3088501392`, its cables `Firewall4xQSXP16xSFP_-111464`. The cable side changes every session; the device side persists.
-- It also shows up after placing a new switch: its ports (`CableLink.switchID`) and cables carry an ID the device no longer has.
-- The game already has the right repair, `NetworkSwitch.PatchStaleSwitchId` (stale ID with the same name prefix → current ID), but only calls it from `ReconnectCables`, when a device powers on.
+| Symptom | Fixed in | Where it starts | What the game then does | Status |
+|---|---|---|---|---|
+| Malware gets past a correctly set-up firewall | 1.0 | gregCore changes a placed device's ID but not its ports' or cables' IDs | Malware and route checks find firewalls by the device's ID but follow the cables' IDs | gregCore part suspected, game part confirmed |
+| A customer loses all connectivity after a load | 1.1 | gregCore gives newly bought switches IDs that can repeat | On load, its duplicate-ID handling leaves the wrong switch registered | Both confirmed |
+| Servers plugged into a working switch won't connect, so their ticket never completes | 1.2 | The same device/cable ID mismatch as the first row | On load, its stale-ID repair can hand a cable to the wrong switch of the same model | gregCore part suspected; the game's behaviour is confirmed in its code, its part here suspected |
 
-The mod does the same for every switch, router and firewall: for each port, it corrects a stale `CableLink.switchID`, finds the port's cable end (≤ 0.3 m from the port), corrects a stale `SwitchID` through `UpdateCableInfo`, and then calls `NetworkMap.RemapDeviceId(old, new)` for routing. An ID counts as stale when it isn't the device's own ID, names no device that exists, and has the same name prefix. The repair runs every 30 seconds and in a Harmony prefix on `ComputeAttacks`.
+None of these has been seen without gregCore installed, but an unmodded game hasn't been tested for them either.
 
-### Duplicate device IDs
+### gregCore
 
-- When a save is loaded, `NetworkSwitch.SwitchInsertedInRack(SwitchSaveData)` checks `ContainsDuplicateSwitchId`. If the ID is taken, it gives the device a new one and calls `NetworkMap.RemapDeviceId(old, new)`. But that moves the map entry of the device that *already had* the ID, and `RegisterSwitch` only adds a key that's absent. So the renamed device is never registered, and `NetworkMap.switches[newId]` is the other device.
-- Path finding (`FindAllServerPathsFromCustomerPure`, `FindAllShortestPaths`) skips any node whose entry in `switches` is switched off. If the other device is a boxed, unpowered switch, every route through the renamed one is cut.
-- Duplicates can appear when a mod gives new devices an ID of its own, for example one made from where they spawn: the shop always delivers to the same spots, so a new switch can take the ID of an older one of the same model.
-- The mod gives every copy but one (the one registered in `NetworkMap`) a fresh `GenerateUniqueSwitchId()`, together with its ports, as long as it has no cables. Then, for any device whose ID is filed under a different device in `NetworkMap.switches`, it puts the device back and re-registers the other one under its own ID. This runs every 30 seconds, before each attack, and in a prefix on `SaveSystem.SaveGame`. A last-priority postfix on `SwitchInsertedInRack` also catches a device placed with another device's ID (for example when a mod puts back the ID it had before placement) and returns it to the ID the game just gave it, which its ports and `NetworkMap` already use.
+Two pieces of gregCore's WorldSync code (the `DataCenterModLoader` namespace) give devices IDs the game doesn't expect. Both run even though gregCore logs `[HwId] DISABLED … device IDs pass through untouched` on this game build. Both were reported on the [gregCore Workshop discussions](https://steamcommunity.com/sharedfiles/filedetails/discussions/3719510811) on 3 November 2026.
 
-### Cables recorded on the wrong switch
+1. **IDs made from the spawn position (confirmed).**
+   - `SpawnedObjectTracker.TryResolveNewSwitch` gives a newly spawned switch with an empty ID the ID `{name}_{hash}`. The hash comes from `Patch_UsableObject_InteractOnClick.GenerateDeterministicId(name, transform.position)`: the position rounded to centimetres, combined as `x*73856093 ^ y*19349663 ^ z*83492791`. `TryResolveNewPatchPanel` does the same for patch panels. Nothing checks that the ID is free.
+   - The shop delivers to fixed spots, so the same model bought onto the same spot always gets the same ID. In one save, six newly bought switches each had the ID of a switch already racked and cabled for one customer. All six IDs reproduce exactly from the delivery spots, for example (5.36, 1.71, −34.08) gives `Switch16CU_1297367901`.
+   - Different models bought onto one spot share the number too: a router, a 16+4-port switch and a 16-port switch all ended in `_1962418541`.
+2. **IDs written back after placement (confirmed in the code; its effect suspected).**
+   - A postfix on `Rack.MarkPositionAsUsed` records the ID of whatever goes into a rack slot (`Patch_Rack_MarkPositionAsUsed.PendingRestores` / `InstalledObjects`, keyed by rack position).
+   - `Patch_NetworkSwitch_SwitchInsertedInRack.Postfix` then writes that ID back over the one the game has just assigned, so the spawn-position ID survives placement.
+   - By then the game has already copied its own new ID onto the device's ports (`CableLink.switchID`) and registered it in `NetworkMap`, and neither is updated. Cables plugged in afterwards take the port's ID, so the device and its cables disagree.
+   - This matches the firewall in the save that started this mod. The device was `Firewall4xQSXP16xSFP_3088501392`, one of the delivery-spot hashes, and its cables said `Firewall4xQSXP16xSFP_-111464`, an ID the game assigns.
 
-- When a save loads, the game repairs stale cable IDs ("Restoring SwitchID logic", `[Load] Remapping stale switch ID`). For each port with a cable, it takes whichever of the cable's endpoint IDs has the port's name prefix and names no existing switch, and calls `NetworkMap.RemapDeviceId(stale, portId)` for the whole map. It never checks which end is in the port, so a stale ID can be handed to a different switch of the same model.
-- Once a cable names a switch that exists, nothing treats it as stale again. The switch it's really plugged into then looks unconnected: in one save, every cable in three switches was recorded on three others, and new servers on those switches couldn't connect.
-- Each port records the cable plugged into it (`CableLink.cableIDsOnLink`). When a port holds a cable whose nearest end (≤ 0.3 m) names another switch of the same model, and that switch has no port holding that end at least as close, the mod renames the end to the port's switch. The map is fixed one cable at a time, like the game's own power-off and power-on (`RemoveCableConnection(id, preserveLACP: true)`, `UpdateCableInfo`, `RegisterCableInNetworkMap`). LACP groups follow, and routes are re-evaluated. This is part of the 30-second repair.
+Suggested fixes:
+
+- Before assigning a generated or restored ID, check that no other `NetworkSwitch` or `PatchPanel` in the scene has it, and pick another if one does. Check every object, not only those in `NetworkMap`, because boxed devices aren't registered. The game's own `GenerateUniqueSwitchId()` is one option.
+- Or leave devices in their boxes without an ID: the game gives them one when they're racked.
+- When restoring an ID at placement, also update the device's ports and call `NetworkMap.RemapDeviceId(gameId, restoredId)`, so the ports, the cables and the map agree.
+
+### The game
+
+These are in the game's own code. They do no harm as long as each device has one ID that its ports and cables share, which seems to hold in the unmodded game. But they turn the mismatches above into lost connectivity, and the game could guard against all three.
+
+1. **Malware and route checks rely on device and cable IDs agreeing (confirmed).**
+   - `MaliciousAttackManager.ComputeAttacks` builds its graph from `WaypointInitializationSystem.GetAllCables()` and names each switch end after `CableEndpoint.SwitchID`. It runs a BFS from `"Internet"` that stops at walls, and attacks every powered server it reaches.
+   - Walls are firewalls from `NetworkMap.GetAllFirewalls()` that are on and have no blank allow-all rule, matched by `NetworkSwitch.switchId`. When the device's ID and its cables' ID differ, the firewall is just another node and malware walks through it.
+   - Route evaluation's `GetSwitchById(cableId)` returns null for such a device, so the firewall's rules are skipped too.
+   - The game's own repair, `NetworkSwitch.PatchStaleSwitchId`, only runs from `ReconnectCables`, when a device powers on.
+2. **Duplicate IDs on load leave the wrong device registered (confirmed).**
+   - `NetworkSwitch.SwitchInsertedInRack(SwitchSaveData)` finds the ID taken (`ContainsDuplicateSwitchId`), gives this device a new ID and calls `NetworkMap.RemapDeviceId(old, new)`.
+   - That moves the entry of the device that *already had* the ID, and `RegisterSwitch` only adds keys that are absent. So the renamed device is never registered, and its new ID points at the other device.
+   - Path finding (`FindAllServerPathsFromCustomerPure`, `FindAllShortestPaths`) skips any node whose `switches` entry is switched off. When the other device is a switch still in its box, every route through the renamed one is cut.
+   - Suggested fix: skip that `RemapDeviceId` call, since nothing of this device is registered yet, and register the renamed device.
+3. **The load's stale-ID repair matches by name only (confirmed in the code; its part in the save suspected).**
+   - "Restoring SwitchID logic" in the network load coroutine goes through every port with a cable. It takes whichever of the cable's endpoint IDs has the port's name prefix (for example `Switch16CU_`) and names no live switch, and calls `NetworkMap.RemapDeviceId(stale, portId)` across the whole map.
+   - It never checks which end of the cable is in the port, so a stale ID can be given to another switch of the same model. After that, nothing treats it as stale.
+   - In one save, every cable in the three switches that had gregCore's IDs was recorded on three other switches, one of them another customer's. That included both uplinks of two of them, which is why new servers there couldn't connect.
+   - Suggested fix: use the port's own cable (`CableLink.cableIDsOnLink`) and the end nearest the port, and rename that end only.
+
+If you change the network map at runtime, note that the game only re-evaluates routes on request. It calls `WaypointInitializationSystem.RequestRouteEvaluation()` itself after power, cable, LACP and route changes, so call it after your change too.
+
+### Ruled out
+
+- **Firewall Fix:** its repairs only ever rename a cable end to the device whose port holds it, or give a boxed duplicate a fresh ID along with its ports, so they can't create either kind of mismatch.
+- **Next-Gen Hardware and Next-Gen Patch Panels** (same author): neither changes switch IDs.
+
+## How the fixes work
+
+### Stale cable IDs (1.0)
+
+For every switch, router and firewall, the mod does what `PatchStaleSwitchId` does:
+1. For each port, it corrects a stale `CableLink.switchID`.
+2. It finds the port's cable end (≤ 0.3 m from the port) and corrects a stale `SwitchID` through `UpdateCableInfo`.
+3. It calls `NetworkMap.RemapDeviceId(old, new)` so routing uses the new ID.
+
+An ID counts as stale when it isn't the device's own ID, names no device that exists, and has the same name prefix. The repair runs every 30 seconds and in a Harmony prefix on `ComputeAttacks`.
+
+### Duplicate device IDs (1.1)
+
+- Of each set of devices sharing an ID, the one registered in `NetworkMap` keeps it. Each other copy gets a fresh `GenerateUniqueSwitchId()`, and its ports follow, as long as it has no cables.
+- For any device whose ID is filed under a different device in `NetworkMap.switches`, the mod puts the device back and re-registers the other one under its own ID.
+- This runs every 30 seconds, before each attack, and in a prefix on `SaveSystem.SaveGame`. For the first minute after a load, it also checks the map every 5 seconds, without renaming anything.
+- A last-priority postfix on `SwitchInsertedInRack` catches a device placed with another device's ID. It returns the device to the ID the game just gave it, which its ports and `NetworkMap` already use.
+
+### Cables recorded on the wrong switch (1.2)
+
+- Each port records the cable plugged into it (`CableLink.cableIDsOnLink`).
+- When a port holds a cable whose nearest end (≤ 0.3 m) names another switch of the same model, and that switch has no port holding that end at least as close, the mod renames the end to the port's switch.
+- The map is fixed one cable at a time, the way the game does when a switch powers off and on: `RemoveCableConnection(id, preserveLACP: true)`, `UpdateCableInfo`, `RegisterCableInNetworkMap`. LACP groups follow, and routes are re-evaluated.
+- This is part of the 30-second repair.
 
 ## Building from source
 

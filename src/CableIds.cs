@@ -18,6 +18,8 @@ namespace FirewallFix
     // A cable end can also name the wrong device that does exist: vanilla's load repair renames stale IDs by name
     // prefix alone, so it can give them to any other switch of the same model (seen in a save: every cable in three
     // switches recorded on three others). The port's own record of its cable settles whose end it is.
+    // The stale IDs most likely come from gregCore putting back a device's pre-placement ID after the game has set
+    // its ports (see README, "Where the bugs come from").
     internal static class CableIds
     {
         const float MaxEndToPort = 0.3f; // metres; a cable end sits on its port

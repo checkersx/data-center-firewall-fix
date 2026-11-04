@@ -5,8 +5,8 @@ using Il2Cpp;
 
 namespace FirewallFix
 {
-    // Two devices can end up with the same ID. A mod can name a newly spawned switch "{model}_{hash of its spawn
-    // position}", and the shop drops purchases on the same few spots, so a new switch takes the ID of the last one of
+    // Two devices can end up with the same ID. gregCore 1.2.4-dev (SpawnedObjectTracker.TryResolveNewSwitch) names a
+    // newly spawned switch "{model}_{hash of its spawn position}", and the shop drops purchases on the same few spots, so a new switch takes the ID of the last one of
     // its model bought onto that spot (seen in a save: six new switches in the delivery area, each sharing its ID with
     // a racked switch of one customer).
     // That's harmless until the save is loaded. SwitchInsertedInRack then gives the second copy a new ID and calls
@@ -65,7 +65,7 @@ namespace FirewallFix
                 }
             }
 
-            // Acts only on the state the load bug leaves behind, so it does nothing once the cause or the game is fixed.
+            // Acts only on the state the load bug leaves behind, so it does nothing once gregCore or the game is fixed.
             foreach (var d in devices)
             {
                 var id = d.switchId;
@@ -87,7 +87,7 @@ namespace FirewallFix
             WaypointInitializationSystem.Instance?.RequestRouteEvaluation();
         }
 
-        // A device just placed in a rack (not loaded from a save). Another mod's SwitchInsertedInRack postfix may put back
+        // A device just placed in a rack (not loaded from a save). gregCore's SwitchInsertedInRack postfix puts back
         // the ID the device had in its box, which can be another device's. The ID the game had just given it is still
         // on its ports and in NetworkMap, so going back to that keeps all three in step.
         public static void Placed(NetworkSwitch d)
