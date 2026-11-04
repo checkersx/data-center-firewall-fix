@@ -24,7 +24,7 @@ For the Internet Access ticket, one rule is enough: [b]allow port 443 from the c
 [b]Do I need a "deny any any" rule?[/b] No. A firewall already blocks anything that no rule allows. Keeping one does no harm, as long as it's below your allow rules (the first rule that matches wins).
 
 [h2]⚠ This is a code mod: pick an install method below[/h2]
-Data Center doesn't install code mods by itself. With [b]WorkshopModSync[/b] (a free helper by Bloody) it's subscribe and play. Without it, there's one file to copy.
+Data Center doesn't install code mods by itself. With [b]WorkshopModSync[/b] (a free helper by Bloody) it's subscribe and play; without it, you copy one file.
 
 [h2]Before you install (once, for any code mod)[/h2]
 If you already use other code mods, you most likely have these. Otherwise:
@@ -44,9 +44,8 @@ Check: if the [b]Plugins[/b] folder in your game folder contains [b]WorkshopModS
 [/olist]
 
 [h3]Way 2: set up WorkshopModSync once, then subscribe and play[/h3]
-[b]WorkshopModSync[/b] is a free helper made by [b]Bloody[/b]. It comes with Bloody's [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3773467133]DHCP Mod[/url].
 [olist]
-[*]Subscribe to [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3773467133]DHCP Mod[/url] and to this mod.
+[*]Subscribe to Bloody's [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3773467133]DHCP Mod[/url] (WorkshopModSync comes with it) and to this mod.
 [*]Start the game, wait for the main menu, then quit.
 [*]In your game folder, open [b]Data Center_Data[/b] → [b]StreamingAssets[/b] → [b]Mods[/b] → [b]workshop_3773467133[/b] → [b]Plugins[/b], and copy [b]WorkshopModSync.dll[/b].
 [*]Go back to your game folder, open its [b]Plugins[/b] folder, and paste.
@@ -57,7 +56,7 @@ Check: if the [b]Plugins[/b] folder in your game folder contains [b]WorkshopModS
 [olist]
 [*]Subscribe to this mod.
 [*]Start the game, wait for the main menu, then quit.
-[*]In your game folder, open [b]Data Center_Data[/b] → [b]StreamingAssets[/b] → [b]Mods[/b]. Type [b]FirewallFix.dll[/b] into File Explorer's search box (top right), and copy the file it finds.
+[*]In your game folder, open [b]Data Center_Data[/b] → [b]StreamingAssets[/b] → [b]Mods[/b]. Type [b]FirewallFix.dll[/b] into File Explorer's search box and copy the file it finds.
 [*]Go back to your game folder, open its [b]Mods[/b] folder, and paste.
 [*]Start the game.
 [/olist]
@@ -71,7 +70,7 @@ Download [b]FirewallFix.dll[/b] from the [url=https://github.com/checkersx/data-
 In [b]UserData\MelonPreferences.cfg[/b] in your game folder (it appears after the first run with the mod), under [b][FirewallFix][/b]:
 [list]
 [*][b]RepairCableIds = true[/b]: the fix itself. Leave it on.
-[*][b]RepairDuplicateIds = true[/b]: see the note at the bottom. Leave it on.
+[*][b]RepairDuplicateIds = true[/b]: the v1.1 fix (see the bottom). Leave it on.
 [*][b]DisableMalware = false[/b]: set it to [b]true[/b] to switch malware attacks off completely.
 [/list]
 Edit the file with the game closed.
@@ -87,9 +86,13 @@ Look in the MelonLoader console for [i]"Malware attack: N server(s) exposed (…
 [*]Problems? Report them on [url=https://github.com/checkersx/data-center-firewall-fix/issues]GitHub[/url], with the file Data Center\MelonLoader\Latest.log.
 [/list]
 
-[i]Since v1.1.0 it also fixes a customer suddenly losing all connectivity when you load a save. That happens when a newly bought switch ends up with the same ID as one you already have: the game mixes the two up on load. The mod gives the new switch its own ID, and repairs saves where it has already happened.[/i]
-
-[i]Since v1.2.0 it also fixes servers that won't connect even though they're plugged into a working switch, which can leave a ticket that never completes. The game had recorded some of that switch's cables as belonging to a different switch, so it couldn't see the link. The mod puts each cable back on the switch it's actually plugged into, and the servers come online a minute or so after you load.[/i]
+[h2]Also fixed, and where the bugs come from[/h2]
+Not all of these are the game's own bugs.
+[list]
+[*][b]Malware gets past the firewall (v1.0):[/b] the outdated cable IDs most likely come from another mod that changes device IDs without updating their cables (suspected).
+[*][b]A customer suddenly loses all connectivity when you load (v1.1):[/b] another mod can give a newly bought switch the same ID as one you already have (confirmed). The game then mixes the two up as the save loads; that part is the game's. The mod gives the new switch its own ID and repairs affected saves.
+[*][b]Servers won't connect although they're plugged into a working switch, so their ticket never completes (v1.2):[/b] likely starts with the same outdated IDs. When loading, the game's repair of old IDs can then hand a switch's cables to another switch of the same model. The mod puts each cable back on the switch it's plugged into.
+[/list]
 
 Source code (GPL-3.0): [url=https://github.com/checkersx/data-center-firewall-fix]github.com/checkersx/data-center-firewall-fix[/url]
 Tested on Data Center Steam build 25869593 with MelonLoader 0.7.3. Not affiliated with Waseku.
