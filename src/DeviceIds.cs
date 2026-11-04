@@ -129,7 +129,7 @@ namespace FirewallFix
         static bool IsRegistered(NetworkMap map, NetworkSwitch d) =>
             map.switches.TryGetValue(d.switchId, out var v) && v == d;
 
-        static string Describe(NetworkSwitch d) =>
+        internal static string Describe(NetworkSwitch d) =>
             string.IsNullOrEmpty(d.labelText) ? d.switchId : $"{d.labelText} ({d.switchId})";
     }
 }

@@ -65,7 +65,7 @@ Check: if the [b]Plugins[/b] folder in your game folder contains [b]WorkshopModS
 [h3]Way 4: without the Steam Workshop[/h3]
 Download [b]FirewallFix.dll[/b] from the [url=https://github.com/checkersx/data-center-firewall-fix/releases]GitHub releases page[/url] and put it in the [b]Mods[/b] folder in your game folder.
 
-[b]Check it worked:[/b] the MelonLoader console shows [b]Firewall Fix v1.1.0[/b]. Within 10 minutes of play it shows a [i]"Malware attack: …"[/i] line.
+[b]Check it worked:[/b] the MelonLoader console shows [b]Firewall Fix v1.2.0[/b]. Within 10 minutes of play it shows a [i]"Malware attack: …"[/i] line.
 
 [h2]Settings[/h2]
 In [b]UserData\MelonPreferences.cfg[/b] in your game folder (it appears after the first run with the mod), under [b][FirewallFix][/b]:
@@ -88,6 +88,8 @@ Look in the MelonLoader console for [i]"Malware attack: N server(s) exposed (…
 [/list]
 
 [i]Since v1.1.0 it also fixes a customer suddenly losing all connectivity when you load a save. That happens when a newly bought switch ends up with the same ID as one you already have: the game mixes the two up on load. The mod gives the new switch its own ID, and repairs saves where it has already happened.[/i]
+
+[i]Since v1.2.0 it also fixes servers that won't connect even though they're plugged into a working switch, which can leave a ticket that never completes. The game had recorded some of that switch's cables as belonging to a different switch, so it couldn't see the link. The mod puts each cable back on the switch it's actually plugged into, and the servers come online a minute or so after you load.[/i]
 
 Source code (GPL-3.0): [url=https://github.com/checkersx/data-center-firewall-fix]github.com/checkersx/data-center-firewall-fix[/url]
 Tested on Data Center Steam build 25869593 with MelonLoader 0.7.3. Not affiliated with Waseku.

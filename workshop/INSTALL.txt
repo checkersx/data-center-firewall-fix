@@ -27,7 +27,7 @@ INSTALL
   3. Start the game.
 
 CHECK IT WORKED
-  - The MelonLoader console window shows "Firewall Fix v1.1.0".
+  - The MelonLoader console window shows "Firewall Fix v1.2.0".
   - Within 10 minutes of play it shows a line starting "Malware attack:".
 
 SETTINGS

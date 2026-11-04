@@ -4,7 +4,7 @@ using Il2Cpp;
 using MelonLoader;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(FirewallFix.FirewallFixMod), "Firewall Fix", "1.1.0", "checkersx")]
+[assembly: MelonInfo(typeof(FirewallFix.FirewallFixMod), "Firewall Fix", "1.2.0", "checkersx")]
 [assembly: MelonGame("Waseku", "Data Center")]
 
 namespace FirewallFix
@@ -31,7 +31,7 @@ namespace FirewallFix
             Log = LoggerInstance;
             var prefs = MelonPreferences.CreateCategory("FirewallFix", "Firewall Fix");
             _repair = prefs.CreateEntry("RepairCableIds", true, "Repair stale cable device IDs",
-                "Fixes cables that point at an old ID for their switch, router or firewall, so firewalls block malware and apply their rules.");
+                "Fixes cables that point at an old or wrong ID for their switch, router or firewall, so firewalls block malware and apply their rules, and every switch's cables count as its own.");
             _dedupe = prefs.CreateEntry("RepairDuplicateIds", true, "Repair duplicate device IDs",
                 "Gives a new switch its own ID when it got the ID of one you already have, so a customer doesn't lose connectivity when the save is next loaded. Also repairs saves where that already happened.");
             _disableMalware = prefs.CreateEntry("DisableMalware", false, "Disable malware attacks",
